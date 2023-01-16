@@ -17,13 +17,20 @@ struct ContentView: View {
         .onEnded(){ _ in
             print("Long press now")
         }
+    
+    let magnificationGesture = MagnificationGesture(minimumScaleDelta: 0)
+        .onChanged(){ _ in
+            print("Magnifying")
+        }
+        .onEnded(){ _ in
+            print("Gesture Ended")
+        }
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
-                .gesture(tap)
-                .gesture(longPress)
+                .gesture(magnificationGesture)
             Text("Hello, world!")
         }
         .padding()
