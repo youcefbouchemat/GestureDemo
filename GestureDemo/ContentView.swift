@@ -13,6 +13,11 @@ struct ContentView: View {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
+                .gesture(
+                    TapGesture()
+                        .onEnded{ _ in
+                            print("Tapped")
+                        })
             Text("Hello, world!")
         }
         .padding()
