@@ -25,15 +25,16 @@ struct ContentView: View {
         .onEnded(){ _ in
             print("Gesture Ended")
         }
+    @GestureState private var offset: CGSize = .zero
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-                .gesture(magnificationGesture)
-            Text("Hello, world!")
-        }
-        .padding()
+        let drag = DragGesture()
+            .updating($offset) { dragValue, state, transaction in
+                state = dragValue.translation
+            }
+        return Image(systemName: "hand.point.right.fill")
+            .font(.largeTitle)
+            .offset(offset)
+            .gesture(drag)
     }
 }
 
