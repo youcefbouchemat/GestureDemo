@@ -8,33 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    let tap = TapGesture()
-        .onEnded(){ _ in
-            print("Tapped now")
-        }
-    
-    let longPress = LongPressGesture()
-        .onEnded(){ _ in
-            print("Long press now")
-        }
-    
-    let magnificationGesture = MagnificationGesture(minimumScaleDelta: 0)
-        .onChanged(){ _ in
-            print("Magnifying")
-        }
-        .onEnded(){ _ in
-            print("Gesture Ended")
-        }
     @GestureState private var offset: CGSize = .zero
+    @GestureState private var longPress: Bool = false
+    
     var body: some View {
-        let drag = DragGesture()
-            .updating($offset) { dragValue, state, transaction in
-                state = dragValue.translation
+        let longPressAndDrag = LongPressGesture(minimumDuration: 1.0)
+            .updating($longPress) { value, state, transition in
+                state = value
             }
+            .simultaneously(with: DragGesture())
+            .updating($offset) { value, state, transaction in
+                state = value.second?.translation ?? .zero
+                    print("darg");
+                }
         return Image(systemName: "hand.point.right.fill")
+            .foregroundColor(longPress ? Color.red : Color.blue)
             .font(.largeTitle)
             .offset(offset)
-            .gesture(drag)
+            .gesture(longPressAndDrag)
     }
 }
 
