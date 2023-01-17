@@ -9,24 +9,34 @@ import SwiftUI
 
 struct ContentView: View {
     @GestureState private var offset: CGSize = .zero
-    @GestureState private var longPress: Bool = false
+    @State private var dragEnabled: Bool = false
     
     var body: some View {
-        let longPressAndDrag = LongPressGesture(minimumDuration: 1.0)
-            .updating($longPress) { value, state, transition in
-                state = value
-            }
-            .simultaneously(with: DragGesture())
+        let longPressBeforeDrag = LongPressGesture(minimumDuration: 2.0)
+            .onEnded( { _ in
+                self.dragEnabled = true
+            })
+            .sequenced(before: DragGesture())
             .updating($offset) { value, state, transaction in
-                state = value.second?.translation ?? .zero
-                    print("darg");
+                switch value {
+                    case .first(true):
+                        print("Long press in progress")
+                    case .second(true, let drag):
+                        state = drag?.translation ?? .zero
+                    case .first(false):
+                        print("---")
+                    case .second(false, _):
+                        print("---")
                 }
+            }
+            .onEnded { value in
+                self.dragEnabled = false
+            }
         return Image(systemName: "hand.point.right.fill")
-            .foregroundColor(longPress ? Color.red : Color.blue)
+            .foregroundColor(dragEnabled ? Color.green : Color.blue)
             .font(.largeTitle)
             .offset(offset)
-            .gesture(longPressAndDrag)
-    }
+            .gesture(longPressBeforeDrag)}
 }
 
 struct ContentView_Previews: PreviewProvider {
